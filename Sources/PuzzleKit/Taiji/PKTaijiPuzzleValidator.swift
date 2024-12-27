@@ -97,7 +97,7 @@ public class PKTaijiPuzzleValidator {
                 guard let origin = puzzle.tile(at: sOrigin) else { continue }
 
                 if expectedShapeRotates || origin.symbol == .slashdash(rotates: true) {
-                    let result = slashdashRotates(
+                    let result = Self.slashdashRotates(
                         lhs: expectedShape,
                         rhs: shape,
                         lhsOrigin: baseTile,
@@ -189,7 +189,7 @@ public class PKTaijiPuzzleValidator {
         return accum + value
     }
 
-    private func slashdashRotates(
+    static func slashdashRotates(
         lhs: [PKGridCoordinate],
         rhs: [PKGridCoordinate],
         lhsOrigin: PKTaijiTile,

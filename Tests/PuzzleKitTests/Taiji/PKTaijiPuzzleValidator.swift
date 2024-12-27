@@ -87,4 +87,23 @@ struct PKTaijiPuzzleValidatorTests {
             try notOkSlashdash.validate().get()
         }
     }
+
+    @Test("Slashdash checker mechanism when rotating")
+    func validationSlashdashRotatable() async throws {
+        let lhs = [Coord(x: 0, y: 0), Coord(x: -1, y: 0), Coord(x: -1, y: -1), Coord(x: -1, y: 1)]
+        let rhs = [Coord(x: 0, y: 0), Coord(x: 1, y: 0), Coord(x: 1, y: 1), Coord(x: 1, y: -1)]
+        let lhsOrigin = {
+            var tile = PKTaijiTile.symbolic(.slashdash(rotates: false))
+            tile.filled = true
+            tile.state = .fixed
+            return tile
+        }()
+        let rhsOrigin = {
+            var tile = PKTaijiTile.symbolic(.slashdash(rotates: true))
+            tile.filled = true
+            return tile
+        }()
+
+        #expect(PKTaijiPuzzleValidator.slashdashRotates(lhs: lhs, rhs: rhs, lhsOrigin: lhsOrigin, rhsOrigin: rhsOrigin))
+    }
 }

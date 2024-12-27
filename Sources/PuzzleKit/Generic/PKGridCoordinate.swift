@@ -42,7 +42,7 @@ public struct PKGridCoordinate: Hashable, Equatable, Sendable {
 
     /// Returns a copy of the coordinate, rotated 90 degrees.
     public func rotated() -> Self {
-        return .init(x: -self.y, y: -self.x)
+        return .init(x: -self.y, y: self.x)
     }
 
     /// Converts the coordinate into an array index, relative to a grid's size and count.
