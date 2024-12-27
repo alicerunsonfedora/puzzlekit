@@ -45,12 +45,11 @@ public class PKTaijiPuzzleValidator {
         for (index, tile) in puzzle.tiles.enumerated() {
             let tileCoordinate = index.toCoordinate(wrappingAround: puzzle.width)
             if regionMap[tileCoordinate] == nil {
-                let region = puzzle.getFloodFilledRegion(startingAt: tileCoordinate)
-                let regionData = PKGridRegion(coordinates: region, identifiedBy: currentRegion)
-                for coordinate in region {
+                let region = PKGridRegion(floodFillingFrom: tileCoordinate, in: puzzle, identifiedBy: currentRegion)
+                for coordinate in region.members {
                     regionMap[coordinate] = currentRegion
                 }
-                self.regions[currentRegion] = regionData
+                self.regions[currentRegion] = region
                 currentRegion += 1
             }
             self.updateSymbolLUT(index: index, tile: tile)

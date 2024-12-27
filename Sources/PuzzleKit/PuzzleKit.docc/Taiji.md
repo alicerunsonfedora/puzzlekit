@@ -2,7 +2,7 @@
 
 @Metadata {
     @TitleHeading("Puzzle")
-    @PageImage(purpose: card, source: "puzzle-taiji", alt: "An example of a Taiji puzzle board")
+    @PageImage(purpose: card, source: "puzzle-taiji.png", alt: "An example of a Taiji puzzle board")
 }
 
 A constraint satisfaction grid puzzle using various encoded symbols.
