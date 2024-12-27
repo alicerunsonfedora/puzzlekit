@@ -10,4 +10,9 @@ extension String {
     func distance(to index: Self.Index) -> Int {
         self.distance(from: self.startIndex, to: index)
     }
+
+    func character(at offset: Int) -> Character {
+        let idx = self.index(self.startIndex, offsetBy: offset)
+        return self[idx]
+    }
 }
