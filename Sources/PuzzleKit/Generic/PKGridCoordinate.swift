@@ -115,6 +115,12 @@ public struct PKGridCoordinate: Hashable, Equatable, Sendable {
     }
 }
 
+extension PKGridCoordinate: CustomStringConvertible {
+    public var description: String {
+        return "Coord(\(x), \(y))"
+    }
+}
+
 // MARK: - Operators
 
 public extension PKGridCoordinate {

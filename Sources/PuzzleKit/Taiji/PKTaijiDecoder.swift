@@ -61,8 +61,16 @@ enum PKTaijiDecoder {
                 state = .scanForTile
             case (Constants.fillEmpty, .scanForTile):
                 state = .prefillArray(invisible: false)
+
+                // NOTE: Check for the changes here, because doing so after skipping the attributes is too much to handle.
+                if let lastTile = tiles.last, lastTile.state != .normal, lastTile.filled {
+                    filledSymbolicTile = false
+                }
             case (Constants.fillFixed, .scanForTile):
                 state = .prefillArray(invisible: true)
+                if let lastTile = tiles.last, lastTile.state != .invisible {
+                    filledSymbolicTile = false
+                }
             case let (char, .prefillArray(invisible)):
                 guard let index = Constants.upperAlphabet.firstIndex(of: char) else {
                     throw .invalidPrefillWidth
@@ -117,18 +125,8 @@ enum PKTaijiDecoder {
                 tiles.append(tile)
                 filledSymbolicTile = true
                 mechanics.insert(.diamond)
-            case (Constants.dash, .scanForTile):
-                var tile = PKTaijiTile.symbolic(.slashdash(rotates: false))
-                if let (extendedAttrs, readChars) = Self.getExtendedAttributes(after: charIndex, in: source) {
-                    tile = tile.applying(attributes: extendedAttrs)
-                    state = .readExtendedAttributes
-                    extendedAttrsChars = readChars
-                }
-                tiles.append(tile)
-                filledSymbolicTile = true
-                mechanics.insert(.slashdash)
-            case (Constants.slash, .scanForTile):
-                var tile = PKTaijiTile.symbolic(.slashdash(rotates: true))
+            case (Constants.dash, .scanForTile), (Constants.slash, .scanForTile):
+                var tile = PKTaijiTile.symbolic(.slashdash(rotates: character == Constants.slash))
                 if let (extendedAttrs, readChars) = Self.getExtendedAttributes(after: charIndex, in: source) {
                     tile = tile.applying(attributes: extendedAttrs)
                     state = .readExtendedAttributes

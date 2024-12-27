@@ -39,84 +39,52 @@ struct PKTaijiPuzzleValidatorTests {
     @Test("Flower constraints")
     func validationFlowerConstraints() async throws {
         let okFlowers = try PKTaijiPuzzle(decoding: "6:V02+B2X22W02+B2+G2+B202Y202Z2202+B20")
-        let okValid = okFlowers.validate()
-        switch okValid {
-        case .success(_):
-            break
-        case .failure(let error):
-            Issue.record(error, "Validation failed.")
+        #expect(throws: Never.self) {
+            try okFlowers.validate().get()
         }
 
         let notOkFlowers = try PKTaijiPuzzle(decoding: "6:V02+B2X22W02+B2+G2+B202Y222Z2202+B20")
-        let notOkValidation = notOkFlowers.validate()
-        switch notOkValidation {
-        case .success(_):
-            Issue.record("Validation passed incorrectly.")
-        case .failure(let error):
-            #expect(error == PKTaijiPuzzleValidatorError.invalidPetalCount(.init(x: 2, y: 5)))
+        #expect(throws: PKTaijiPuzzleValidatorError.invalidPetalCount(.init(x: 2, y: 5))) {
+            try notOkFlowers.validate().get()
         }
     }
 
     @Test("Diamond constraints")
     func validationDiamondConstraints() async throws {
         let okDiamonds = try PKTaijiPuzzle(decoding: "3:Sw20Sw2Sw20Sw22Sw0Sw0")
-        let okValid = okDiamonds.validate()
-        switch okValid {
-        case .success(_):
-            break
-        case .failure(let error):
-            Issue.record(error, "Validation failed.")
+        #expect(throws: Never.self) {
+            try okDiamonds.validate().get()
         }
 
         let notOkDiamonds = try PKTaijiPuzzle(decoding: "3:Sw+BSw2Sw+BSw22Sw0Sw0")
-        let notOkValid = notOkDiamonds.validate()
-        switch notOkValid {
-        case .success(_):
-            Issue.record("Validation passed incorrectly.")
-        case .failure(let error):
-            #expect(error == PKTaijiPuzzleValidatorError.invalidDiamondSize(1, 0))
+        #expect(throws: PKTaijiPuzzleValidatorError.invalidDiamondSize(1, 0)) {
+            try notOkDiamonds.validate().get()
         }
     }
 
     @Test("Dots constraints")
     func validationDotConstraints() async throws {
         let okDots = try PKTaijiPuzzle(decoding: "3:Dw20222Jw420Dw4")
-        let validator = okDots.validate()
-        switch validator {
-        case .success(_):
-            break
-        case .failure(let error):
-            Issue.record(error, "Validation failed.")
+        #expect(throws: Never.self) {
+            try okDots.validate().get()
         }
 
         let notOkDots = try PKTaijiPuzzle(decoding: "3:Dw20222Jw4+BDw4")
-        let notOkValid = notOkDots.validate()
-        switch notOkValid {
-        case .success(_):
-            Issue.record("Validation passed incorrectly.")
-        case .failure(let error):
-            #expect(error == .invalidRegionSize(1, 0))
+        #expect(throws: PKTaijiPuzzleValidatorError.invalidRegionSize(1, 0)) {
+            try notOkDots.validate().get()
         }
     }
 
     @Test("Slashdash constraints")
     func validationSlashdashConstraints() async throws {
         let okSlashdash = try PKTaijiPuzzle(decoding: "6:644+B26Tw640Uw22644+B2")
-        let validator = okSlashdash.validate()
-        switch validator {
-        case .success(_):
-            break
-        case .failure(let error):
-            Issue.record(error, "Validation failed.")
+        #expect(throws: Never.self) {
+            try okSlashdash.validate().get()
         }
 
-//        let notOkSlashdash = try PKTaijiPuzzle(decoding: "4:02+CUw2Uw440Uw0Tw6+C60")
-//        let notOkValidator = notOkSlashdash.validate()
-//        switch notOkValidator {
-//        case .success(_):
-//            Issue.record("Validation passed incorrectly.")
-//        case .failure(let error):
-//            #expect(error == .invalidRegionShape)
-//        }
+        let notOkSlashdash = try PKTaijiPuzzle(decoding: "4:02+CUw2Uw440Uw0Tw6+C60")
+        #expect(throws: PKTaijiPuzzleValidatorError.invalidRegionShape) {
+            try notOkSlashdash.validate().get()
+        }
     }
 }

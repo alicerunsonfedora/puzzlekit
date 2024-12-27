@@ -132,7 +132,6 @@ struct TaijiPuzzleDecoderTests {
         ])
     }
 
-    // FIXME: The decoder breaks on this specific puzzle. Why? (Also breaks slashdash tests).
     @Test("Complex Puzzle Decodes - Special Case 1")
     func decoderDecodesComplexPuzzleSpecialCase_1() async throws {
         let puzzle = try PKTaijiPuzzle(decoding: "4:222+BUw2Uw440Uw0Tw6+B262")
@@ -164,6 +163,7 @@ struct TaijiPuzzleDecoderTests {
             .symbolic(.slashdash(rotates: true)),
             {
                 var tile = PKTaijiTile.symbolic(.slashdash(rotates: false))
+                tile.state = .fixed
                 tile.filled = true
                 return tile
             }(),
@@ -172,7 +172,11 @@ struct TaijiPuzzleDecoderTests {
             // Row 4
             .empty(),
             .emptyFilled(),
-            .emptyFilled(),
+            {
+                var tile = PKTaijiTile(state: .fixed)
+                tile.filled = true
+                return tile
+            }(),
             .emptyFilled()
         ])
     }

@@ -31,24 +31,27 @@ public class PKTaijiPuzzleValidator {
     var puzzle: PKTaijiPuzzle
     var symbolLUT = SymbolLUT()
     var regionMap = [PKGridCoordinate: Int]()
-    var totalRegions: Int
+    var regions = [Int: PKGridRegion]()
+
+    var totalRegions: Int { return regions.count }
     
     public init(puzzle: PKTaijiPuzzle) {
         self.puzzle = puzzle
         
         var currentRegion = 1
-        self.totalRegions = 0
         self.regionMap = [PKGridCoordinate: Int]()
+        self.regions = [:]
         
         for (index, tile) in puzzle.tiles.enumerated() {
             let tileCoordinate = index.toCoordinate(wrappingAround: puzzle.width)
             if regionMap[tileCoordinate] == nil {
                 let region = puzzle.getFloodFilledRegion(startingAt: tileCoordinate)
+                let regionData = PKGridRegion(coordinates: region, identifiedBy: currentRegion)
                 for coordinate in region {
                     regionMap[coordinate] = currentRegion
                 }
+                self.regions[currentRegion] = regionData
                 currentRegion += 1
-                self.totalRegions += 1
             }
             self.updateSymbolLUT(index: index, tile: tile)
         }
@@ -75,17 +78,13 @@ public class PKTaijiPuzzleValidator {
         }
 
         if symbolLUT.slashdashes.count > 0 {
-            let regions = symbolLUT.slashdashes.map { regionMap[$0] }
-            var regionShapes = [[PKGridCoordinate]]()
-
-            for (regionCoordinate, region) in zip(symbolLUT.slashdashes, regions) {
-                guard let region else { continue }
-                var currentShape = [PKGridCoordinate]()
-                for (key, value) in regionMap {
-                    if value != region { continue }
-                    currentShape.append(key - regionCoordinate)
+            let regions = symbolLUT.slashdashes
+                .map { coordinate in
+                    let regionID = self.regionMap[coordinate] ?? 1
+                    return self.regions[regionID]
                 }
-                regionShapes.append(currentShape)
+            let regionShapes = regions.enumerated().map { (index, regionDatum) in
+                regionDatum?.shape(relativeTo: symbolLUT.slashdashes[index]) ?? []
             }
 
             guard let expectedShape = regionShapes.first,
@@ -94,7 +93,7 @@ public class PKTaijiPuzzleValidator {
             }
             let expectedShapeRotates = baseTile.symbol == .slashdash(rotates: true)
             for (index, shape) in regionShapes.dropFirst().enumerated() {
-                let sOrigin = symbolLUT.slashdashes[index]
+                let sOrigin = symbolLUT.slashdashes[index+1]
                 guard let origin = puzzle.tile(at: sOrigin) else { continue }
 
                 if expectedShapeRotates || origin.symbol == .slashdash(rotates: true) {
@@ -107,7 +106,7 @@ public class PKTaijiPuzzleValidator {
                         return .failure(.invalidRegionShape)
                     }
                 } else {
-                    let matches = shape.hashValue == expectedShape.hashValue
+                    let matches = Set(shape) == Set(expectedShape)
                     if !matches {
                         return .failure(.invalidRegionShape)
                     }
@@ -180,11 +179,8 @@ public class PKTaijiPuzzleValidator {
         let expectedSize = plusDots - minusDots
         if expectedSize == 0 { return true }
 
-        let regionSize = regionMap.count { (_, value) in
-            value == region
-        }
-
-        return expectedSize == regionSize
+        let regionData = regions[region]
+        return expectedSize == regionData?.size
     }
 
     private func sumDotTile(accum: Int, coordinate: PKGridCoordinate, additive: Bool) -> Int {
@@ -222,6 +218,7 @@ public class PKTaijiPuzzleValidator {
 
         var foundMatch = false
         for _ in 1...4 {
+            print(rotatingShape, staticShape)
             if Set(rotatingShape) == Set(staticShape) {
                 foundMatch = true
                 break
