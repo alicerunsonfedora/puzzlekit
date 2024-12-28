@@ -217,7 +217,6 @@ public class PKTaijiPuzzleValidator {
 
         var foundMatch = false
         for _ in 1...4 {
-            print(rotatingShape, staticShape)
             if Set(rotatingShape) == Set(staticShape) {
                 foundMatch = true
                 break

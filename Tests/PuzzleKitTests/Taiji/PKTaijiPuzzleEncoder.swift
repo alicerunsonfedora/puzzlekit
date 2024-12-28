@@ -18,7 +18,7 @@ struct PKTaijiPuzzleEncoderTests {
             "6:W+EW+DUw+EY0Y+EY0Y+EUw+DW+EW0",
 
             // TODO: Investigate this last case below...
-//            "9:Ew+DBw+BTw+ECw+DTw+FTw+MBw+BDw4+CTw+CBw+BTw0Cw6+G"
+            "9:Ew+DBw+BTw+ECw+DTw+FTw+MBw+BDw4+CTw+CBw+BTw0Cw6+G"
           ])
     func taijiPuzzleEncodes(code: String) async throws {
         let puzzle = try PKTaijiPuzzle(decoding: code)

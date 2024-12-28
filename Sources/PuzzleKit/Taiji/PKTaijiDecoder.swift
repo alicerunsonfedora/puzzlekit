@@ -99,7 +99,9 @@ enum PKTaijiDecoder {
                     extendedAttrsChars = readChars
                 }
                 tiles.append(tile)
-                filledSymbolicTile = true
+                if tile.state != .fixed {
+                    filledSymbolicTile = true
+                }
                 mechanics.insert(.dot)
             case let (char, .scanForTile) where Constants.flowers.contains(char):
                 guard let index = Constants.flowers.firstIndex(of: char) else {
@@ -114,7 +116,9 @@ enum PKTaijiDecoder {
                 }
                 tiles.append(tile)
                 mechanics.insert(.flower)
-                filledSymbolicTile = true
+                if tile.state != .fixed {
+                    filledSymbolicTile = true
+                }
             case (Constants.diamond, .scanForTile):
                 var tile = PKTaijiTile.symbolic(.diamond)
                 if let (extendedAttrs, readChars) = Self.getExtendedAttributes(after: charIndex, in: source) {
@@ -123,7 +127,9 @@ enum PKTaijiDecoder {
                     extendedAttrsChars = readChars
                 }
                 tiles.append(tile)
-                filledSymbolicTile = true
+                if tile.state != .fixed {
+                    filledSymbolicTile = true
+                }
                 mechanics.insert(.diamond)
             case (Constants.dash, .scanForTile), (Constants.slash, .scanForTile):
                 var tile = PKTaijiTile.symbolic(.slashdash(rotates: character == Constants.slash))
@@ -133,7 +139,9 @@ enum PKTaijiDecoder {
                     extendedAttrsChars = readChars
                 }
                 tiles.append(tile)
-                filledSymbolicTile = true
+                if tile.state != .fixed {
+                    filledSymbolicTile = true
+                }
                 mechanics.insert(.slashdash)
             case let (char, .readExtendedAttributes):
                 extendedAttrsChars -= 1
