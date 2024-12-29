@@ -6,7 +6,7 @@
 //
 
 /// A representation of a Taiji puzzle.
-public struct PKTaijiPuzzle: Equatable {
+public struct PKTaijiPuzzle: Equatable, Sendable {
     /// The source that generated the puzzle.
     public internal(set) var source: String
 

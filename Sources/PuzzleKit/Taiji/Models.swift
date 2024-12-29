@@ -8,7 +8,10 @@
 import Foundation
 
 /// A representation of a Taiji puzzle tile.
-public struct PKTaijiTile: Sendable, Equatable, Hashable, CustomStringConvertible {
+public struct PKTaijiTile: Sendable, Equatable, Hashable, CustomStringConvertible, Identifiable {
+    /// A unique identifier for this tile.
+    public var id = UUID()
+
     /// Whether this tile is currently filled in.
     public var filled: Bool = false
 
