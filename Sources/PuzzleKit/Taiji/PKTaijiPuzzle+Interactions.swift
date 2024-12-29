@@ -35,12 +35,12 @@ public extension [PKTaijiTile].Index {
     }
 }
 
-extension PKTaijiPuzzle {
+public extension PKTaijiPuzzle {
     func flippingTile(at coordinate: PKGridCoordinate) -> PKTaijiPuzzle {
         let index = coordinate.toIndex(relativeTo: self)
         guard index > -1, index < tiles.count else { return self }
         var newCopy = self
-        newCopy.tiles[index].filled = !newCopy.tiles[index].filled
+        newCopy.tiles[index].filled.toggle()
         return newCopy
     }
 }
