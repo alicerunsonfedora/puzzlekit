@@ -59,6 +59,11 @@ public struct PKTaijiTile: Sendable, Equatable, Hashable, CustomStringConvertibl
         return .init(state: .invisible)
     }
 
+    public static func == (lhs: PKTaijiTile, rhs: PKTaijiTile) -> Bool {
+        // NOTE: Ignoring the ID since this causes encoding and decoding to break.
+        lhs.state == rhs.state && lhs.symbol == rhs.symbol && lhs.color == rhs.color && lhs.filled == rhs.filled
+    }
+
     /// Creates a normal tile with a symbol on it.
     /// - Parameter symbol: The symbol to place on the tile.
     /// - Parameter color: The tile symbol's color. Defaults to black.
