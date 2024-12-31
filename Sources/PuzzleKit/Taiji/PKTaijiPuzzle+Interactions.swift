@@ -55,7 +55,8 @@ public extension PKTaijiPuzzle {
         let index = coordinate.toIndex(relativeTo: self)
         guard (tiles.startIndex...tiles.endIndex).contains(index) else { return self }
         var newCopy = self
-        newCopy.tiles[index].symbol = symbol
+        let oldTile = self.tiles[index]
+        newCopy.tiles[index] = PKTaijiTile(state: oldTile.state, symbol: symbol, color: oldTile.color)
         return newCopy
     }
 
@@ -67,7 +68,8 @@ public extension PKTaijiPuzzle {
         let index = coordinate.toIndex(relativeTo: self)
         guard (tiles.startIndex...tiles.endIndex).contains(index) else { return self }
         var newCopy = self
-        newCopy.tiles[index].state = newState
+        let oldTile = self.tiles[index]
+        newCopy.tiles[index] = PKTaijiTile(state: newState, symbol: oldTile.symbol, color: oldTile.color)
         return newCopy
     }
 }
