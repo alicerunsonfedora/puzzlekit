@@ -36,11 +36,38 @@ public extension [PKTaijiTile].Index {
 }
 
 public extension PKTaijiPuzzle {
+    /// Flips the filled state of the tile at a specified coordinate.
+    /// - Parameter coordinate: The coordinate of the tile to flip.
+    /// - Returns: A copy of the puzzle board with the tile flipped.
     func flippingTile(at coordinate: PKGridCoordinate) -> PKTaijiPuzzle {
         let index = coordinate.toIndex(relativeTo: self)
-        guard index > -1, index < tiles.count else { return self }
+        guard (tiles.startIndex...tiles.endIndex).contains(index) else { return self }
         var newCopy = self
         newCopy.tiles[index].filled.toggle()
+        return newCopy
+    }
+
+    /// Replaces the symbol at a specified coordinate with a new symbol.
+    /// - Parameter coordinate: The coordinate of the tile to replace its symbol.
+    /// - Parameter symbol: The symbol that the tile should be replaced with.
+    /// - Returns: A copy of the puzzle with the tile taking on the new symbol.
+    func replacingSymbol(at coordinate: PKGridCoordinate, with symbol: PKTaijiTileSymbol?) -> PKTaijiPuzzle {
+        let index = coordinate.toIndex(relativeTo: self)
+        guard (tiles.startIndex...tiles.endIndex).contains(index) else { return self }
+        var newCopy = self
+        newCopy.tiles[index].symbol = symbol
+        return newCopy
+    }
+
+    /// Updates the state of the tile at a specified coordinate.
+    /// - Parameter coordinate: The coordinate of the tile to update its state.
+    /// - Parameter newState: The new state the tile will take on.
+    /// - Returns: A copy of the puzzle with the tile taking on the new state.
+    func applyingState(at coordinate: PKGridCoordinate, with newState: PKTaijiTileState) -> PKTaijiPuzzle {
+        let index = coordinate.toIndex(relativeTo: self)
+        guard (tiles.startIndex...tiles.endIndex).contains(index) else { return self }
+        var newCopy = self
+        newCopy.tiles[index].state = newState
         return newCopy
     }
 }

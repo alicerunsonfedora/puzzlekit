@@ -71,6 +71,9 @@ enum PKTaijiEncoder {
 }
 
 public extension String {
+    /// Creates a string by encoding a given Taiji puzzle.
+    /// - Parameter puzzle: The puzzle to encode into a string.
+    /// - SeeAlso: For more information on the encoding format, refer to <doc:Taiji#Code-representation>.
     init(encoding puzzle: PKTaijiPuzzle) {
         self = PKTaijiEncoder.encode(puzzle)
     }

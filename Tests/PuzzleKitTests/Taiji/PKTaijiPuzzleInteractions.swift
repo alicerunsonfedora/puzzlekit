@@ -56,4 +56,22 @@ struct PKTaijiPuzzleInteractions {
         #expect(flipped.tiles.count == 10)
         #expect(puzzle.tiles.allSatisfy({ tile in tile.filled == false }))
     }
+
+    @Test("Tile symbol is replaced")
+    func tileSymbolReplaces() async throws {
+        let puzzle = try PKTaijiPuzzle(decoding: "3:+I")
+        let replaced = puzzle.replacingSymbol(at: .init(x: 2, y: 2), with: .diamond)
+        
+        #expect(replaced.tiles.count == 9)
+        #expect(replaced.tile(at: .init(x: 2, y: 2))?.symbol == .diamond)
+    }
+
+    @Test("Tile state is updated")
+    func tileStateReplaces() async throws {
+        let puzzle = try PKTaijiPuzzle(decoding: "3:+I")
+        let updated = puzzle.applyingState(at: .init(x: 1, y: 2), with: .fixed)
+    
+        #expect(updated.tiles.count == 9)
+        #expect(updated.tile(at: .init(x: 1, y: 2))?.state == .fixed)
+    }
 }

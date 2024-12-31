@@ -5,9 +5,16 @@
 //  Created by Marquis Kurt on 21-12-2024.
 //
 
+import Foundation
+
 /// A representation of a Taiji puzzle.
 public struct PKTaijiPuzzle: Equatable, Sendable {
-    /// The source that generated the puzzle.
+    /// The source string that generated the puzzle.
+    ///
+    /// This source string should follow the specifications for the Taiji puzzle code defined in
+    /// <doc:Taiji#Code-representation>. If the puzzle was created using the ``init(size:)`` initializer, this will be
+    /// an empty string.
+    @available(*, deprecated, message: "Encode the puzzle using the string initializer.")
     public internal(set) var source: String
 
     /// The array of tiles the puzzle board contains.
@@ -18,6 +25,19 @@ public struct PKTaijiPuzzle: Equatable, Sendable {
 
     /// The mechanics that are present in the puzzle board.
     public internal(set) var mechanics: PKTaijiMechanics
+
+    /// Creates an empty Taiji puzzle board of a given size.
+    ///
+    /// The board will consist of a series of empty, normal tiles. To change the symbols for any of the tiles, refer to
+    /// <doc:PKTaijiPuzzle#Manipulating-Tiles>.
+    ///
+    /// - Parameter size: The size of the board.
+    public init(size: CGSize) {
+        self.source = ""
+        self.width = Int(size.width)
+        self.tiles = Array(repeating: .empty(), count: Int(size.width * size.height))
+        self.mechanics = []
+    }
 
     /// Creates a puzzle by decoding a puzzle code string.
     ///
