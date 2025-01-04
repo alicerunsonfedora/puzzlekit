@@ -31,7 +31,6 @@ struct TaijiPuzzleDecoderTests {
     )
     func decoderBasicExample(code: String, tile: PKTaijiTile) async throws {
         let puzzle = try PKTaijiPuzzle(decoding: code)
-        #expect(puzzle.source == code)
         #expect(puzzle.width == 1)
         #expect(puzzle.tiles.count == 1)
         
@@ -43,14 +42,12 @@ struct TaijiPuzzleDecoderTests {
     @Test("Puzzle with Shorthand Decodes", arguments: zip(["3:+I", "2:-Z"], [9, 26]))
     func decoderArrayFill(code: String, expectedCount: Int) async throws {
         let puzzle = try PKTaijiPuzzle(decoding: code)
-        #expect(puzzle.source == code)
         #expect(puzzle.tiles.count == expectedCount)
     }
     
     @Test("Puzzle with Colors Decodes", arguments: zip(["1:Ak0", "1:Ur0"], [PKTaijiSymbolColor.white, PKTaijiSymbolColor.red]))
     func decoderWithColorAttributes(code: String, expectedColor: PKTaijiSymbolColor) async throws {
         let puzzle = try PKTaijiPuzzle(decoding: code)
-        #expect(puzzle.source == code)
         #expect(puzzle.tiles.count == 1)
         
         if let firstTile = puzzle.tiles.first {
@@ -69,7 +66,6 @@ struct TaijiPuzzleDecoderTests {
           ])
     func decoderWithSpecialAttrs(args: DecoderSpecialAttrsArguments) async throws {
         let puzzle = try PKTaijiPuzzle(decoding: args.code)
-        #expect(puzzle.source == args.code)
         #expect(puzzle.tiles.count == 1)
         
         if let firstTile = puzzle.tiles.first {

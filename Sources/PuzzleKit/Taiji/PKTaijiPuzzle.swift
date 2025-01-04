@@ -7,16 +7,10 @@
 
 import Foundation
 
+// MARK: - Main puzzle structure
+
 /// A representation of a Taiji puzzle.
 public struct PKTaijiPuzzle: Equatable, Sendable {
-    /// The source string that generated the puzzle.
-    ///
-    /// This source string should follow the specifications for the Taiji puzzle code defined in
-    /// <doc:Taiji#Code-representation>. If the puzzle was created using the ``init(size:)`` initializer, this will be
-    /// an empty string.
-    @available(*, deprecated, message: "Encode the puzzle using the string initializer.")
-    public internal(set) var source: String
-
     /// The array of tiles the puzzle board contains.
     public internal(set) var tiles: [PKTaijiTile]
 
@@ -33,7 +27,6 @@ public struct PKTaijiPuzzle: Equatable, Sendable {
     ///
     /// - Parameter size: The size of the board.
     public init(size: CGSize) {
-        self.source = ""
         self.width = Int(size.width)
         self.tiles = Array(repeating: .empty(), count: Int(size.width * size.height))
         self.mechanics = []
@@ -45,7 +38,6 @@ public struct PKTaijiPuzzle: Equatable, Sendable {
     /// - SeeAlso: For more information on the Taiji puzzle code, refer to <doc:Taiji#Code-representation>.
     public init(decoding source: String) throws(PKTaijiPuzzleDecoderError) {
         let (boardWidth, tiles, mechanics) = try PKTaijiDecoder.decode(from: source)
-        self.source = source
         self.tiles = tiles
         self.width = boardWidth
         self.mechanics = mechanics
@@ -59,6 +51,8 @@ public extension PKTaijiPuzzle {
         PKTaijiPuzzleValidator(puzzle: self).validate()
     }
 }
+
+// MARK: - Grid Conformances
 
 extension PKTaijiPuzzle: PKGrid {
     public typealias Tile = PKTaijiTile
@@ -99,6 +93,8 @@ extension PKTaijiPuzzle: PKGrid {
     }
 }
 
+// MARK: - Flood Fill Conformance
+
 extension PKTaijiPuzzle: PKFloodFillable {
     public struct Criteria: Equatable {
         var tileFilled: Bool
@@ -110,5 +106,51 @@ extension PKTaijiPuzzle: PKFloodFillable {
 
     public func tile(_ tile: PKTaijiTile, matches criteria: Criteria) -> Bool {
         tile.filled == criteria.tileFilled
+    }
+}
+
+// MARK: - Stretching Conformance
+
+extension PKTaijiPuzzle: PKGridStretchable {
+    public func appendingColumn() -> PKTaijiPuzzle {
+        var copy = self
+        copy.width += 1
+
+        for i in 1...self.height {
+            let index = i * self.width
+            copy.tiles.insert(.empty(), at: index + 1)
+        }
+        
+        return copy
+    }
+    
+    public func appendingRow() -> PKTaijiPuzzle {
+        var copy = self
+        copy.tiles += Array(repeating: .empty(), count: width)
+        return copy
+    }
+    
+    public func removingLastColumn() -> PKTaijiPuzzle {
+        var copy = self
+        copy.width -= 1
+        copy.tiles = []
+
+        var column = 1
+        for tile in self.tiles {
+            if column > copy.width {
+                column = 1
+                continue
+            }
+            copy.tiles.append(tile)
+            column += 1
+        }
+        
+        return copy
+    }
+    
+    public func removingLastRow() -> PKTaijiPuzzle {
+        var copy = self
+        copy.tiles.removeLast(copy.width)
+        return copy
     }
 }
