@@ -15,4 +15,14 @@ extension String {
         let idx = self.index(self.startIndex, offsetBy: offset)
         return self[idx]
     }
+    
+    init?(charCode: UInt32) {
+        guard let scalar = UnicodeScalar(charCode) else { return nil }
+        let char = Character(scalar)
+        self.init(char)
+    }
+
+    init?(charCode: Int) {
+        self.init(charCode: UInt32(charCode))
+    }
 }

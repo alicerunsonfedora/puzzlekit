@@ -56,17 +56,18 @@ enum PKTaijiEncoder {
     
     static func encode(_ puzzle: PKTaijiPuzzle) -> String {
         let prefix = "\(puzzle.width):"
-        let rawString = puzzle.tiles.map { $0.encode() }.reduce("", +)
+        var encodedString = puzzle.tiles.map { $0.encode() }.reduce("", +)
 
-        let reducedString = rawString.replacing(/(00)+0*/) { output in
-            let length = output.output.0.count
-            return "+\(Constants.upperAlphabet.character(at: length - 1))"
-        }.replacing(/(88)+8*/) { output in
-            let length = output.output.0.count
-            return "-\(Constants.upperAlphabet.character(at: length - 1))"
+        // NOTE: Reverse the contents of the range, because we want to go top-down instead of bottom-up.
+        for i in (2...26).reversed() {
+            guard let character = String(charCode: 64 + i) else { continue }
+            
+            encodedString = encodedString
+                .replacingOccurrences(of: String(repeating: "0", count: i), with: "+" + character)
+                .replacingOccurrences(of: String(repeating: "8", count: i), with: "-" + character)
         }
 
-        return prefix + reducedString
+        return prefix + encodedString
     }
 }
 
