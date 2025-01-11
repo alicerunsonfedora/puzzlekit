@@ -52,6 +52,28 @@ public extension PKTaijiPuzzle {
     }
 }
 
+// MARK: - Codable Conformance
+
+// TODO: How do we test this???
+
+extension PKTaijiPuzzle: Codable {
+    public init(from decoder: any Decoder) throws {
+        var container = try decoder.unkeyedContainer()
+        let code = try container.decode(String.self)
+
+        let (boardWidth, tiles, mechanics) = try PKTaijiDecoder.decode(from: code)
+        self.tiles = tiles
+        self.width = boardWidth
+        self.mechanics = mechanics
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        let code = PKTaijiEncoder.encode(self)
+        try container.encode(code)
+    }
+}
+
 // MARK: - Grid Conformances
 
 extension PKTaijiPuzzle: PKGrid {
