@@ -55,7 +55,7 @@ public extension PKGridRegion {
     /// - Parameter grid: The grid to flood-fill into.
     /// - Parameter id: The region's unique identifier.
     init<Grid>(floodFillingFrom origin: PKGridCoordinate, in grid: Grid, identifiedBy id: Int) where Grid: PKGrid & PKFloodFillable {
-        let region = grid.getFloodFilledRegion(startingAt: origin)
+        let region = grid.findFloodFilledRegion(startingAt: origin)
         coordinates = Array(region)
         self.id = id
     }

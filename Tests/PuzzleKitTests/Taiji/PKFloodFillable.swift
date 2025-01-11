@@ -29,10 +29,10 @@ struct PKFloodFillTests {
             .empty()
         ])
 
-        let region = puzzle.getFloodFilledRegion(startingAt: .one)
+        let region = puzzle.findFloodFilledRegion(startingAt: .one)
         #expect(region.count == 3)
 
-        let otherRegion = puzzle.getFloodFilledRegion(startingAt: .init(x: 2, y: 2))
+        let otherRegion = puzzle.findFloodFilledRegion(startingAt: .init(x: 2, y: 2))
         #expect(otherRegion.count == 1)
     }
 
@@ -48,7 +48,7 @@ struct PKFloodFillTests {
         let puzzle = try PKTaijiPuzzle(decoding: "6:0Cw+B2Y2Aw2Cw2222Dw2Sw+CDw0Bw+CCw0Tw22Sw02Uw2")
         #expect(puzzle.tiles.count == 24)
 
-        let region = puzzle.getFloodFilledRegion(startingAt: coordinate)
+        let region = puzzle.findFloodFilledRegion(startingAt: coordinate)
         #expect(region.count == size)
     }
 }

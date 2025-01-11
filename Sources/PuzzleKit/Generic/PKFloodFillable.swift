@@ -28,7 +28,7 @@ extension PKGrid where Self: PKFloodFillable {
     /// Retrieves the region the specified origin tile resides in, using the flood fill algorithm.
     /// - Parameter origin: The origin tile to get the region of.
     /// - Returns: A set of tiles that reside within the same region as the origin tile.
-    public func getFloodFilledRegion(startingAt origin: PKGridCoordinate) -> Set<PKGridCoordinate> {
+    public func findFloodFilledRegion(startingAt origin: PKGridCoordinate) -> Set<PKGridCoordinate> {
         var stack = [origin]
         var visited = Set<PKGridCoordinate>()
         var region = Set<PKGridCoordinate>()
