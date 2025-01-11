@@ -28,6 +28,48 @@ import PuzzleKit
 let puzzle = try PKTaijiPuzzle(decoding: "1:Tw0")
 ```
 
+### Codable support
+
+Codable support is also offered for cases where puzzles are contained in Codable structs, or for multiwindow support in
+SwiftUI.
+
+For example, you might have a file structure that looks like the following:
+
+```swift
+struct MyPuzzleFile: Codable {
+    var name: String
+    var author: String
+    var puzzle: PKTaijiPuzzle
+}
+```
+
+When the puzzle is encoded as a string, the puzzle will automatically be constructed, as if ``init(decoding:)`` were
+called:
+
+```swift
+let json =
+    """
+    {
+        "name": "Geschlossene Erinnerungen",
+        "author": "Lorelei Weiss",
+        "puzzle": "6:644+B26Tw640Uw22644+B2"
+    }
+    """
+
+let data = json.data(using: .utf8)!
+let decoder = JSONDecoder()
+let result = try decoder.decode(MyPuzzleFile.self, from: data)
+```
+
+When encoding data, the puzzle will be encoded into a string code, as if ``Swift/String/init(encoding:)`` were called:
+
+```swift
+let pzl = MyPuzzleFile(...)
+let encoder = JSONEncoder()
+encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+let json = try encoder.encode(pzl)
+```
+
 ## Editing Tiles
 
 Tiles cannot be edited directly. Instead, several methods are available to allow manipulation of tiles. These methods
@@ -119,6 +161,8 @@ validating the puzzle.
 ### Encoding and Decoding
 
 - ``init(decoding:)``
+- ``init(from:)``
+- ``encode(to:)``
 - ``Swift/String/init(encoding:)``
 - ``PKTaijiPuzzleDecoderError``
 

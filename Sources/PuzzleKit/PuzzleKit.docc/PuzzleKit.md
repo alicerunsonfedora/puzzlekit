@@ -17,3 +17,4 @@ as Sudoku, The Witness, and Taiji.
 - ``PKGridCoordinate``
 - ``PKGridRegion``
 - ``PKFloodFillable``
+- ``PKGridStretchable``
