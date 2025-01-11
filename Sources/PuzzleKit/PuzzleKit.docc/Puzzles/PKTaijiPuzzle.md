@@ -1,16 +1,15 @@
 # ``PuzzleKit/PKTaijiPuzzle``
 
 @Metadata {
-    @TitleHeading("Puzzle")
     @PageImage(purpose: card, source: "puzzle-taiji")
 }
 
 ## Overview
 
-This structure is used to create, edit, and check Taiji puzzles. 
+This structure is used to create, edit, and check Taiji puzzles. For more information on how Taiji puzzles operate,
+refer to <doc:Taiji>.
 
-> Note: For more information on how Taiji puzzles operate, refer to <doc:Taiji>.
-
+### Initializing puzzles
 
 Creating a puzzle can be accomplished by initializing with a size:
 
@@ -20,7 +19,7 @@ import PuzzleKit
 let puzzle = PKTaijiPuzzle(size: .init(width: 3, height: 3))
 ```
 
-For a puzzle with a more complex code, use the ``init(decoding:)`` initializer:
+For a puzzle with a more complex code, use the ``init(decoding:)`` initializer, which accepts a Taiji puzzle code:
 
 ```swift
 import PuzzleKit
@@ -30,8 +29,8 @@ let puzzle = try PKTaijiPuzzle(decoding: "1:Tw0")
 
 ### Codable support
 
-Codable support is also offered for cases where puzzles are contained in Codable structs, or for multiwindow support in
-SwiftUI.
+Codable support is also offered for cases where puzzles are contained in Codable structs, or for multi-window support
+in SwiftUI.
 
 For example, you might have a file structure that looks like the following:
 
@@ -88,9 +87,6 @@ the various types of manipulations.
                 
                 let updatedPuzzle = puzzle.flippingTile(at: .one)
                 ```
-            }
-            @Column {
-                @Video(source: "pktaijipuzzle-flip", alt: "A demonstration of flipping a tile.")
             }
         }
     }
@@ -174,6 +170,7 @@ validating the puzzle.
 ### Grid Tiles
 
 - ``tiles``
+- ``Swift/Int/toCoordinate(wrappingAround:)``
 - ``PKTaijiTile``
 - ``PKTaijiTileState``
 - ``PKTaijiTileSymbol``

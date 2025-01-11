@@ -54,9 +54,28 @@ public extension PKTaijiPuzzle {
 
 // MARK: - Codable Conformance
 
-// TODO: How do we test this???
-
 extension PKTaijiPuzzle: Codable {
+    /// Creates a Taiji puzzle from a decoder, interpreting the input as a puzzle code string.
+    ///
+    /// This initializer is typically used in scenarios where the puzzle might be decoded from a larger structure, such
+    /// as JSON or a window declaration in SwiftUI.
+    ///
+    /// ```swift
+    /// let json =
+    ///     """
+    ///     {
+    ///         "name": "Geschlossene Erinnerungen",
+    ///         "author": "Lorelei Weiss",
+    ///         "puzzle": "6:644+B26Tw640Uw22644+B2"
+    ///     }
+    ///     """
+    ///
+    /// let data = json.data(using: .utf8)!
+    /// let decoder = JSONDecoder()
+    /// let result = try decoder.decode(MyPuzzleFile.self, from: data)
+    /// ```
+    /// 
+    /// - Parameter decoder: The decoder to retrieve the puzzle code from.
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let code = try container.decode(String.self)
@@ -66,7 +85,24 @@ extension PKTaijiPuzzle: Codable {
         self.width = boardWidth
         self.mechanics = mechanics
     }
-    
+
+    /// Encodes the Taiji puzzle into an encoder as a puzzle code string.
+    ///
+    /// This method is typically called within Codable encoders to encode the data into other formats, such as JSON.
+    ///
+    /// ```swift
+    /// struct MyPuzzleFile: Codable {
+    ///     var name: String
+    ///     var author: String
+    ///     var puzzle: PKTaijiPuzzle
+    /// }
+    /// 
+    /// let pzl = MyPuzzleFile(...)
+    /// let encoder = JSONEncoder()
+    /// encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    /// let json = try encoder.encode(pzl)
+    /// ```
+    /// - Parameter encoder: The encoder to encode the puzzle into.
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         let code = PKTaijiEncoder.encode(self)

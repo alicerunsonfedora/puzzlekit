@@ -6,6 +6,9 @@
 //
 
 /// A protocol representing a puzzle grid.
+///
+/// Puzzle grids are typically shaped as a rectangle or square with a determined width and height, and they can be
+/// accessed via a specified coordinate (see ``PKGridCoordinate``).
 public protocol PKGrid {
     /// The type that corresponds to an individual puzzle tile.
     associatedtype Tile
