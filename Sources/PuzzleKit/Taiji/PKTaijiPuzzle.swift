@@ -58,7 +58,7 @@ public extension PKTaijiPuzzle {
 
 extension PKTaijiPuzzle: Codable {
     public init(from decoder: any Decoder) throws {
-        var container = try decoder.unkeyedContainer()
+        let container = try decoder.singleValueContainer()
         let code = try container.decode(String.self)
 
         let (boardWidth, tiles, mechanics) = try PKTaijiDecoder.decode(from: code)
@@ -68,7 +68,7 @@ extension PKTaijiPuzzle: Codable {
     }
     
     public func encode(to encoder: any Encoder) throws {
-        var container = encoder.unkeyedContainer()
+        var container = encoder.singleValueContainer()
         let code = PKTaijiEncoder.encode(self)
         try container.encode(code)
     }
