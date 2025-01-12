@@ -172,12 +172,32 @@ public class PKTaijiPuzzleValidator {
     }
     
     private func diamondConstraintsSatisfied(for region: Int) -> Bool {
-        // TODO: This should support colors.
+        if options.contains(.ignoresColor) {
+            let diamondsInRegion = symbolLUT.diamonds.filter { diamond in
+                guard let diamondRegion = regionMap[diamond] else { return false }
+                return diamondRegion == region
+            }
+            return diamondsInRegion.count == 2 || diamondsInRegion.count == 0
+        }
+
         let diamondsInRegion = symbolLUT.diamonds.filter { diamond in
             guard let diamondRegion = regionMap[diamond] else { return false }
             return diamondRegion == region
         }
-        return diamondsInRegion.count == 2 || diamondsInRegion.count == 0
+
+        var colorMapping = [PKTaijiSymbolColor : Int]()
+        for diamond in diamondsInRegion {
+            guard let tile = puzzle.tile(at: diamond), let color = tile.color else { continue }
+            colorMapping[color, default: 0] += 1
+        }
+        
+        if options.contains(.colorsMatchAnySymbols) {
+            // TODO: Account for flowers and other symbols in this region with colors.
+        }
+        
+        return colorMapping.allSatisfy { (_, count) in
+            count == 2 || count == 0
+        }
     }
 
     private func dotConstraintsSatisfied(for region: Int) -> Bool {

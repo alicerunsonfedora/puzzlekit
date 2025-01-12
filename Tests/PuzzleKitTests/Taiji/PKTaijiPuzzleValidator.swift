@@ -38,6 +38,8 @@ struct PKTaijiPuzzleValidatorTests {
         #expect(validator.regionMap[.init(x: 6, y: 4)] == 5)
     }
 
+    // MARK: - Flower constraints
+
     @Test("Flower constraints", arguments: [
         ("6:V02+B2X22W02+B2+G2+B202Y202Z2202+B20", nil),
         ("3:2Y2Cw60Aw2Sw0Sw+C", nil),
@@ -58,18 +60,43 @@ struct PKTaijiPuzzleValidatorTests {
 
     }
 
-    @Test("Diamond constraints (WTT)")
-    func validationDiamondConstraintsWTT() async throws {
-        let okDiamonds = try PKTaijiPuzzle(decoding: "3:Sw20Sw2Sw20Sw22Sw0Sw0")
-        #expect(throws: Never.self) {
-            try okDiamonds.validate(options: .whatTheTaiji).get()
-        }
+    // MARK: - Diamond constraints
 
-        let notOkDiamonds = try PKTaijiPuzzle(decoding: "3:Sw+BSw2Sw+BSw22Sw0Sw0")
-        #expect(throws: PKTaijiPuzzleValidatorError.invalidDiamondSize(1, 0)) {
-            try notOkDiamonds.validate().get()
+    @Test("Diamond constraints (WTT)", arguments: [
+        ("3:Sw20Sw2Sw20Sw22Sw0Sw0", nil),
+        ("3:Sw+BSw2Sw+BSw22Sw0Sw0", VError.invalidDiamondSize(1, 0))
+    ])
+    func validationDiamondConstraintsWTT(code: String, error: PKTaijiPuzzleValidatorError?) async throws {
+        let puzzle = try PKTaijiPuzzle(decoding: code)
+        if let error {
+            #expect(throws: error.self) {
+                try puzzle.validate(options: .whatTheTaiji).get()
+            }
+        } else {
+            #expect(throws: Never.self) {
+                try puzzle.validate(options: .whatTheTaiji).get()
+            }
         }
     }
+
+    @Test("Diamond constraints (Base game, standalone)", arguments: [
+        ("3:Sr+BSy+DSr+BSy0", nil),
+        ("3:Sr+BSr+DSr+BSy0", VError.invalidDiamondSize(1, 0))
+    ])
+    func validationDiamondConstraintsStrictColors(code: String, error: PKTaijiPuzzleValidatorError?) async throws {
+        let puzzle = try PKTaijiPuzzle(decoding: code)
+        if let error {
+            #expect(throws: error.self) {
+                try puzzle.validate(options: .baseGame).get()
+            }
+        } else {
+            #expect(throws: Never.self) {
+                try puzzle.validate(options: .baseGame).get()
+            }
+        }
+    }
+    
+    // MARK: - Dot constraints
 
     @Test("Dots constraints (WTT)")
     func validationDotConstraintsWTT() async throws {
@@ -80,10 +107,12 @@ struct PKTaijiPuzzleValidatorTests {
 
         let notOkDots = try PKTaijiPuzzle(decoding: "3:Dw20222Jw4+BDw4")
         #expect(throws: PKTaijiPuzzleValidatorError.invalidRegionSize(1, 0)) {
-            try notOkDots.validate().get()
+            try notOkDots.validate(options: .whatTheTaiji).get()
         }
     }
 
+    // MARK: - Slashdash constraints
+    
     @Test("Slashdash constraints (WTT)")
     func validationSlashdashConstraintsWTT() async throws {
         let okSlashdash = try PKTaijiPuzzle(decoding: "6:644+B26Tw640Uw22644+B2")
@@ -93,7 +122,7 @@ struct PKTaijiPuzzleValidatorTests {
 
         let notOkSlashdash = try PKTaijiPuzzle(decoding: "4:02+CUw2Uw440Uw0Tw6+C60")
         #expect(throws: PKTaijiPuzzleValidatorError.invalidRegionShape) {
-            try notOkSlashdash.validate().get()
+            try notOkSlashdash.validate(options: .whatTheTaiji).get()
         }
     }
 
