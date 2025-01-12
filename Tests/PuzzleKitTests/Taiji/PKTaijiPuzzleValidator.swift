@@ -8,6 +8,8 @@
 import Testing
 @testable import PuzzleKit
 
+private typealias VError = PKTaijiPuzzleValidatorError
+
 @Suite("Taiji Puzzle Validator")
 struct PKTaijiPuzzleValidatorTests {
     @Test("Symbol lookup table constructs")
@@ -36,17 +38,24 @@ struct PKTaijiPuzzleValidatorTests {
         #expect(validator.regionMap[.init(x: 6, y: 4)] == 5)
     }
 
-    @Test("Flower constraints")
-    func validationFlowerConstraints() async throws {
-        let okFlowers = try PKTaijiPuzzle(decoding: "6:V02+B2X22W02+B2+G2+B202Y202Z2202+B20")
-        #expect(throws: Never.self) {
-            try okFlowers.validate().get()
+    @Test("Flower constraints", arguments: [
+        ("6:V02+B2X22W02+B2+G2+B202Y202Z2202+B20", nil),
+        ("3:2Y2Cw60Aw2Sw0Sw+C", nil),
+        ("6:V02+B2X22W02+B2+G2+B202Y222Z2202+B20", VError.invalidPetalCount(.init(x: 2, y: 5)))
+    ])
+    func validationFlowerConstraints(code: String, error: PKTaijiPuzzleValidatorError?) async throws {
+        let puzzle = try PKTaijiPuzzle(decoding: code)
+        
+        if let error {
+            #expect(throws: error.self) {
+                try puzzle.validate(options: .whatTheTaiji).get()
+            }
+        } else {
+            #expect(throws: Never.self) {
+                try puzzle.validate(options: .whatTheTaiji).get()
+            }
         }
 
-        let notOkFlowers = try PKTaijiPuzzle(decoding: "6:V02+B2X22W02+B2+G2+B202Y222Z2202+B20")
-        #expect(throws: PKTaijiPuzzleValidatorError.invalidPetalCount(.init(x: 2, y: 5))) {
-            try notOkFlowers.validate().get()
-        }
     }
 
     @Test("Diamond constraints (WTT)")

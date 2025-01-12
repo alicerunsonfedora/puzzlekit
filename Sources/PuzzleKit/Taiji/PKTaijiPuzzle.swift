@@ -128,26 +128,26 @@ extension PKTaijiPuzzle: PKGrid {
 
     public func tile(above coordinate: PKGridCoordinate) -> PKTaijiTile? {
         let index = coordinate.aboveOrNil()?.toIndex(relativeTo: self)
-        guard let index, index >= 1, index < tiles.count else { return nil }
+        guard let index, index >= 0, index < tiles.count else { return nil }
         return self.tiles[index]
     }
 
     public func tile(before coordinate: PKGridCoordinate) -> PKTaijiTile? {
         let index = coordinate.beforeOrNil()?.toIndex(relativeTo: self)
-        guard let index, index >= 1, index < tiles.count else { return nil }
+        guard let index, index >= 0, index < tiles.count else { return nil }
         return self.tiles[index]
     }
 
     public func tile(after coordinate: PKGridCoordinate) -> PKTaijiTile? {
         let index = coordinate.after(stoppingAt: self.width)?.toIndex(relativeTo: self)
-        guard let index, index >= 1, index < tiles.count else { return nil }
+        guard let index, index >= 0, index < tiles.count else { return nil }
         return self.tiles[index]
     }
 
     public func tile(below coordinate: PKGridCoordinate) -> PKTaijiTile? {
         let height = tiles.count / width
         let index = coordinate.below(stoppingAt: height)?.toIndex(relativeTo: self)
-        guard let index, index >= 1, index < tiles.count else { return nil }
+        guard let index, index >= 0, index < tiles.count else { return nil }
         return self.tiles[index]
     }
 }
