@@ -19,6 +19,22 @@ public enum PKTaijiPuzzleValidatorError: Sendable, Equatable, Error {
 public class PKTaijiPuzzleValidator {
     /// A type representing the validation result.
     public typealias ValidationResult = Result<Void, PKTaijiPuzzleValidatorError>
+
+    /// A structure representing the options the validator can accept.
+    public struct Options: OptionSet, Sendable {
+        /// The raw value representing the options available.
+        public var rawValue: Int
+
+        /// Ignore color mechanics when validating.
+        public static let ignoresColor = Options(rawValue: 1 << 0)
+        
+        /// Allow color mechanics to match against any type of symbol when necessary.
+        public static let colorsMatchAnySymbols = Options(rawValue: 1 << 1)
+        
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+    }
     
     struct SymbolLUT {
         var diamonds = [PKGridCoordinate]()
@@ -28,6 +44,7 @@ public class PKTaijiPuzzleValidator {
         var flowers = [PKGridCoordinate]()
     }
     
+    var options: Options
     var puzzle: PKTaijiPuzzle
     var symbolLUT = SymbolLUT()
     var regionMap = [PKGridCoordinate: Int]()
@@ -35,8 +52,9 @@ public class PKTaijiPuzzleValidator {
 
     var totalRegions: Int { return regions.count }
     
-    public init(puzzle: PKTaijiPuzzle) {
+    public init(puzzle: PKTaijiPuzzle, options: Options = []) {
         self.puzzle = puzzle
+        self.options = options
         
         var currentRegion = 1
         self.regionMap = [PKGridCoordinate: Int]()
@@ -225,4 +243,15 @@ public class PKTaijiPuzzleValidator {
         }
         return foundMatch
     }
+}
+
+public extension PKTaijiPuzzleValidator.Options {
+    /// The typical validator rules associated with the base game.
+    static let baseGame: Self = [.colorsMatchAnySymbols]
+
+    /// The typical validator rules associated with the "What the Taiji?!" spinoff.
+    ///
+    /// Due to technical limitations with the Playdate, this validator style ignores some aspects of typical Taiji
+    /// puzzles, such as the lack of color.
+    static let whatTheTaiji: Self = [.ignoresColor]
 }

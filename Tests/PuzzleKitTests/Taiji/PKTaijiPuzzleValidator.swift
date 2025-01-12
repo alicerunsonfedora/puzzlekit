@@ -49,11 +49,11 @@ struct PKTaijiPuzzleValidatorTests {
         }
     }
 
-    @Test("Diamond constraints")
-    func validationDiamondConstraints() async throws {
+    @Test("Diamond constraints (WTT)")
+    func validationDiamondConstraintsWTT() async throws {
         let okDiamonds = try PKTaijiPuzzle(decoding: "3:Sw20Sw2Sw20Sw22Sw0Sw0")
         #expect(throws: Never.self) {
-            try okDiamonds.validate().get()
+            try okDiamonds.validate(options: .whatTheTaiji).get()
         }
 
         let notOkDiamonds = try PKTaijiPuzzle(decoding: "3:Sw+BSw2Sw+BSw22Sw0Sw0")
@@ -62,11 +62,11 @@ struct PKTaijiPuzzleValidatorTests {
         }
     }
 
-    @Test("Dots constraints")
-    func validationDotConstraints() async throws {
+    @Test("Dots constraints (WTT)")
+    func validationDotConstraintsWTT() async throws {
         let okDots = try PKTaijiPuzzle(decoding: "3:Dw20222Jw420Dw4")
         #expect(throws: Never.self) {
-            try okDots.validate().get()
+            try okDots.validate(options: .whatTheTaiji).get()
         }
 
         let notOkDots = try PKTaijiPuzzle(decoding: "3:Dw20222Jw4+BDw4")
@@ -75,11 +75,11 @@ struct PKTaijiPuzzleValidatorTests {
         }
     }
 
-    @Test("Slashdash constraints")
-    func validationSlashdashConstraints() async throws {
+    @Test("Slashdash constraints (WTT)")
+    func validationSlashdashConstraintsWTT() async throws {
         let okSlashdash = try PKTaijiPuzzle(decoding: "6:644+B26Tw640Uw22644+B2")
         #expect(throws: Never.self) {
-            try okSlashdash.validate().get()
+            try okSlashdash.validate(options: .whatTheTaiji).get()
         }
 
         let notOkSlashdash = try PKTaijiPuzzle(decoding: "4:02+CUw2Uw440Uw0Tw6+C60")
@@ -104,6 +104,7 @@ struct PKTaijiPuzzleValidatorTests {
             return tile
         }()
 
-        #expect(PKTaijiPuzzleValidator.slashdashRotates(lhs: lhs, rhs: rhs, lhsOrigin: lhsOrigin, rhsOrigin: rhsOrigin))
+        #expect(
+            PKTaijiPuzzleValidator.slashdashRotates(lhs: lhs, rhs: rhs, lhsOrigin: lhsOrigin, rhsOrigin: rhsOrigin))
     }
 }

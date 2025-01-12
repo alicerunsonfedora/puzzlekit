@@ -47,8 +47,9 @@ public struct PKTaijiPuzzle: Equatable, Sendable {
 public extension PKTaijiPuzzle {
     /// Validates the current puzzle, checking for any unsatisfied constraints.
     /// - Returns: The result from validation.
-    func validate() -> PKTaijiPuzzleValidator.ValidationResult {
-        PKTaijiPuzzleValidator(puzzle: self).validate()
+    func validate(options: PKTaijiPuzzleValidator.Options = []) -> PKTaijiPuzzleValidator.ValidationResult {
+        let validator = PKTaijiPuzzleValidator(puzzle: self, options: options)
+        return validator.validate()
     }
 }
 
