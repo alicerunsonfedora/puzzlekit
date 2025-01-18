@@ -6,6 +6,7 @@
 //
 
 enum PKTaijiDecoder {
+    typealias DecodeError = PKTaijiPuzzleDecoderError
     struct Constants: Sendable {
         static let digits: String = "1234567890"
         static let upperAlphabet: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -38,7 +39,8 @@ enum PKTaijiDecoder {
         case error(PKTaijiPuzzleDecoderError)
     }
 
-    static func decode(from source: String) throws(PKTaijiPuzzleDecoderError) -> (Int, [PKTaijiTile], PKTaijiMechanics) {
+    // swiftlint:disable:next function_body_length cyclomatic_complexity large_tuple
+    static func decode(from source: String) throws(DecodeError) -> (Int, [PKTaijiTile], PKTaijiMechanics) {
         var tiles = [PKTaijiTile]()
         var mechanics: PKTaijiMechanics = []
         var boardWidth = 0
@@ -52,7 +54,7 @@ enum PKTaijiDecoder {
             case let (char, .initial) where Constants.digits.contains(char),
                 let (char, .getWidth) where Constants.digits.contains(char):
                 if state == .initial { state = .getWidth }
-                widthString = widthString + String(char)
+                widthString += String(char)
             case (":", .getWidth):
                 guard let convertedNumber = Int(widthString) else {
                     throw .invalidBoardWidth
@@ -62,7 +64,8 @@ enum PKTaijiDecoder {
             case (Constants.fillEmpty, .scanForTile):
                 state = .prefillArray(invisible: false)
 
-                // NOTE: Check for the changes here, because doing so after skipping the attributes is too much to handle.
+                // NOTE: Check for the changes here, because doing so after skipping the attributes is too much to
+                // handle.
                 if let lastTile = tiles.last, lastTile.state != .normal, lastTile.filled {
                     filledSymbolicTile = false
                 }
@@ -93,7 +96,7 @@ enum PKTaijiDecoder {
                     value = abs(9 - value)
                 }
                 var tile = PKTaijiTile.symbolic(.dot(value: value, additive: additive))
-                if let (extendedAttrs, readChars) = Self.getExtendedAttributes(after: charIndex, in: source) {
+                if let (extendedAttrs, readChars) = Self.getAttributes(after: charIndex, in: source) {
                     tile = tile.applying(attributes: extendedAttrs)
                     state = .readExtendedAttributes
                     extendedAttrsChars = readChars
@@ -109,7 +112,7 @@ enum PKTaijiDecoder {
                 }
                 let value = Constants.flowers.distance(to: index)
                 var tile = PKTaijiTile.symbolic(.flower(petals: value))
-                if let (extendedAttrs, readChars) = Self.getExtendedAttributes(after: charIndex, in: source) {
+                if let (extendedAttrs, readChars) = Self.getAttributes(after: charIndex, in: source) {
                     tile = tile.applying(attributes: extendedAttrs)
                     state = .readExtendedAttributes
                     extendedAttrsChars = readChars
@@ -121,7 +124,7 @@ enum PKTaijiDecoder {
                 }
             case (Constants.diamond, .scanForTile):
                 var tile = PKTaijiTile.symbolic(.diamond)
-                if let (extendedAttrs, readChars) = Self.getExtendedAttributes(after: charIndex, in: source) {
+                if let (extendedAttrs, readChars) = Self.getAttributes(after: charIndex, in: source) {
                     tile = tile.applying(attributes: extendedAttrs)
                     state = .readExtendedAttributes
                     extendedAttrsChars = readChars
@@ -133,7 +136,7 @@ enum PKTaijiDecoder {
                 mechanics.insert(.diamond)
             case (Constants.dash, .scanForTile), (Constants.slash, .scanForTile):
                 var tile = PKTaijiTile.symbolic(.slashdash(rotates: character == Constants.slash))
-                if let (extendedAttrs, readChars) = Self.getExtendedAttributes(after: charIndex, in: source) {
+                if let (extendedAttrs, readChars) = Self.getAttributes(after: charIndex, in: source) {
                     tile = tile.applying(attributes: extendedAttrs)
                     state = .readExtendedAttributes
                     extendedAttrsChars = readChars
@@ -180,7 +183,7 @@ enum PKTaijiDecoder {
         }
     }
 
-    private static func getExtendedAttributes(after index: Int, in source: String) -> (PKTaijiExtendedAttributes, Int)? {
+    private static func getAttributes(after index: Int, in source: String) -> (PKTaijiExtendedAttributes, Int)? {
         var color: PKTaijiSymbolColor?
         var readChars = 0
         var (filled, state) = (false, PKTaijiTileState.normal)
@@ -190,7 +193,7 @@ enum PKTaijiDecoder {
         if Constants.colors.contains(colorCharacter) {
             color = Constants.colorMap[colorCharacter] ?? .black
             readChars += 1
-            
+
             let attribCharacter = source[source.index(after: strIndex)]
             if Constants.specialDigits.contains(attribCharacter) {
                 readChars += 1

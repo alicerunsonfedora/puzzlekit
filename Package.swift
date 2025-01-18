@@ -14,12 +14,14 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.0.0"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", from: "0.58.2"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "PuzzleKit"),
+            name: "PuzzleKit",
+            plugins: [.plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")]),
         .testTarget(
             name: "PuzzleKitTests",
             dependencies: ["PuzzleKit"]

@@ -23,7 +23,7 @@ extension PKTaijiTile {
             }
             tileCode += String(character)
 
-            let color = Constants.colorMap.first { (key: Character, value: PKTaijiSymbolColor) in
+            let color = Constants.colorMap.first { (_: Character, value: PKTaijiSymbolColor) in
                 value == self.color
             }?.key
             if let color {
@@ -35,9 +35,13 @@ extension PKTaijiTile {
                 }
             }
         }
+        tileCode += getBackgroundState()
+        return tileCode
+    }
 
+    private func getBackgroundState() -> String {
         var stateAttribute = "0"
-        switch (self.state) {
+        switch self.state {
         case .invisible:
             stateAttribute = "8"
         case .fixed:
@@ -45,26 +49,24 @@ extension PKTaijiTile {
         case .normal:
             stateAttribute = self.filled ? "2" : "0"
         }
-        tileCode += stateAttribute
-
-        return tileCode
+        return stateAttribute
     }
 }
 
 enum PKTaijiEncoder {
     typealias Constants = PKTaijiDecoder.Constants
-    
+
     static func encode(_ puzzle: PKTaijiPuzzle) -> String {
         let prefix = "\(puzzle.width):"
         var encodedString = puzzle.tiles.map { $0.encode() }.reduce("", +)
 
         // NOTE: Reverse the contents of the range, because we want to go top-down instead of bottom-up.
-        for i in (2...26).reversed() {
-            guard let character = String(charCode: 64 + i) else { continue }
-            
+        for charIdx in (2...26).reversed() {
+            guard let character = String(charCode: 64 + charIdx) else { continue }
+
             encodedString = encodedString
-                .replacingOccurrences(of: String(repeating: "0", count: i), with: "+" + character)
-                .replacingOccurrences(of: String(repeating: "8", count: i), with: "-" + character)
+                .replacingOccurrences(of: String(repeating: "0", count: charIdx), with: "+" + character)
+                .replacingOccurrences(of: String(repeating: "8", count: charIdx), with: "-" + character)
         }
 
         return prefix + encodedString

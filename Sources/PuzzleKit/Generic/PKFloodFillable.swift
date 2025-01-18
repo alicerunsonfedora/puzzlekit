@@ -32,7 +32,7 @@ extension PKGrid where Self: PKFloodFillable {
         var stack = [origin]
         var visited = Set<PKGridCoordinate>()
         var region = Set<PKGridCoordinate>()
-        var criterion: Criteria? = nil
+        var criterion: Criteria?
 
         while !stack.isEmpty {
             guard let top = stack.popLast(), let tile = self.tile(at: top) else {
@@ -69,7 +69,7 @@ extension PKGrid where Self: PKFloodFillable {
                 stack.append(down)
             }
         }
-        
+
         return region
     }
 }

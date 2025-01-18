@@ -42,7 +42,8 @@ public struct PKGridRegion: Hashable, Equatable, Identifiable {
     }
 
     /// Returns an array of coordinates that describe the shape of the region, relative to an origin coordinate.
-    /// - Parameter origin: The origin tile to reference. If none is provided, the first tile in the region will be used.
+    /// - Parameter origin: The origin tile to reference. If none is provided, the first tile in the region will be
+    ///   used.
     public func shape(relativeTo origin: PKGridCoordinate? = nil) -> [PKGridCoordinate] {
         guard let realOrigin = origin ?? coordinates.first else { return [] }
         return coordinates.map { $0 - realOrigin }
@@ -54,7 +55,8 @@ public extension PKGridRegion {
     /// - Parameter origin: The origin tile to start flood-filling from.
     /// - Parameter grid: The grid to flood-fill into.
     /// - Parameter id: The region's unique identifier.
-    init<Grid>(floodFillingFrom origin: PKGridCoordinate, in grid: Grid, identifiedBy id: Int) where Grid: PKGrid & PKFloodFillable {
+    init<Grid>(floodFillingFrom origin: PKGridCoordinate, in grid: Grid, identifiedBy id: Int)
+        where Grid: PKGrid & PKFloodFillable {
         let region = grid.findFloodFilledRegion(startingAt: origin)
         coordinates = Array(region)
         self.id = id

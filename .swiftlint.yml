@@ -1,0 +1,45 @@
+included: 
+  - Sources
+
+allow_zero_lintable_files: false
+strict: false
+lenient: false
+check_for_updates: true
+force_cast: warning
+force_try:
+  severity: warning
+line_length: 120
+type_body_length:
+  - 300
+  - 400
+file_length:
+  warning: 500
+  error: 1200
+
+type_name:
+  min_length: 3
+  max_length:
+    warning: 40
+    error: 50
+  excluded: iPhone
+  allowed_symbols: ["_"]
+identifier_name:
+  min_length:
+    error: 2
+  excluded:
+    - x
+    - y
+    - up
+    - id
+    - URL
+    - GlobalAPIKey
+custom_rules:
+  pk_header:
+    name: "Consistent PuzzleKit Header"
+    regex: "(public|open) (final +)?(class|enum|struct|protocol) ([^P].|.[^K])"
+    capture_group: 4
+    match_kinds:
+      - identifier
+    message: "Public-facing types must be prefixed with 'PK'."
+    severity: warning
+reporter: "xcode"

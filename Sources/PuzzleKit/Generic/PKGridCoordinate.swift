@@ -56,7 +56,7 @@ public struct PKGridCoordinate: Hashable, Equatable, Sendable {
     }
 
     // - MARK: Neighbor Coordinates (Non-nullable/Coalescing)
-    
+
     /// Retrieves the coordinate above.
     public func above() -> Self {
         return .init(x: self.x, y: max(1, self.y - 1))
@@ -99,7 +99,6 @@ public struct PKGridCoordinate: Hashable, Equatable, Sendable {
         return .init(x: max(1, self.x - 1), y: self.y)
     }
 
-
     /// Returns the coordinate below, or nil if the expected coordinate reaches out of bounds.
     /// - Parameter maximum: The maximum coordinate on the Y axis.
     public func below(stoppingAt maximum: Int? = nil) -> Self? {
@@ -140,7 +139,7 @@ public extension PKGridCoordinate {
     }
 
     /// Subtracts a scalar integer value from a grid coordinate.
-    static func - (lhs:PKGridCoordinate, rhs: Int) -> PKGridCoordinate {
+    static func - (lhs: PKGridCoordinate, rhs: Int) -> PKGridCoordinate {
         .init(x: rhs - lhs.x, y: rhs - lhs.y)
     }
 }

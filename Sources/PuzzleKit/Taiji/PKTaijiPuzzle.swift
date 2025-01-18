@@ -175,20 +175,20 @@ extension PKTaijiPuzzle: PKGridStretchable {
         var copy = self
         copy.width += 1
 
-        for i in 1...self.height {
-            let index = i * self.width
+        for row in 1...self.height {
+            let index = row * self.width
             copy.tiles.insert(.empty(), at: index + 1)
         }
-        
+
         return copy
     }
-    
+
     public func appendingRow() -> PKTaijiPuzzle {
         var copy = self
         copy.tiles += Array(repeating: .empty(), count: width)
         return copy
     }
-    
+
     public func removingLastColumn() -> PKTaijiPuzzle {
         var copy = self
         copy.width -= 1
@@ -203,10 +203,10 @@ extension PKTaijiPuzzle: PKGridStretchable {
             copy.tiles.append(tile)
             column += 1
         }
-        
+
         return copy
     }
-    
+
     public func removingLastRow() -> PKTaijiPuzzle {
         var copy = self
         copy.tiles.removeLast(copy.width)
