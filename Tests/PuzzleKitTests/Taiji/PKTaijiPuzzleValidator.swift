@@ -38,6 +38,15 @@ struct PKTaijiPuzzleValidatorTests {
         #expect(validator.regionMap[.init(x: 6, y: 4)] == 5)
     }
 
+    @Test("Region map constructs - special case A")
+    func regionMapConstructsSpecialCase1() async throws {
+        let puzzle = try PKTaijiPuzzle(decoding: "3:Br2+B202+BBy2")
+        let validator = PKTaijiPuzzleValidator(puzzle: puzzle)
+        
+        #expect(puzzle.tiles.count == 9)
+        #expect(validator.regions.count == 3)
+    }
+
     // MARK: - Flower constraints
 
     @Test("Flower constraints", arguments: [
@@ -108,6 +117,25 @@ struct PKTaijiPuzzleValidatorTests {
         let notOkDots = try PKTaijiPuzzle(decoding: "3:Dw20222Jw4+BDw4")
         #expect(throws: PKTaijiPuzzleValidatorError.invalidRegionSize(1, 0)) {
             try notOkDots.validate(options: .whatTheTaiji).get()
+        }
+    }
+
+    @Test("Dots constraints (Base game, standalone)", arguments: [
+        ("3:Br2+B202+BBy2", nil),
+        ("3:Ar20Jy2202Jr20Ay2", nil),
+        ("3:Cr2+B222+BBy2", VError.invalidRegionSize(1, 0)),
+        ("3:Ar20Jr2202Jy20Ay2", VError.invalidRegionSize(1, 0)),
+    ])
+    func validationDotConstraintsBaseGame(code: String, err: PKTaijiPuzzleValidatorError?) async throws {
+        let puzzle = try PKTaijiPuzzle(decoding: code)
+        if let err {
+            #expect(throws: err.self) {
+                try puzzle.validate(options: .baseGame).get()
+            }
+        } else {
+            #expect(throws: Never.self) {
+                try puzzle.validate(options: .baseGame).get()
+            }
         }
     }
 

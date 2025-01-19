@@ -203,5 +203,22 @@ struct TaijiPuzzleDecoderTests {
         let emptyTiles = puzzle.tiles.count { tile in tile == .empty() }
         #expect(emptyTiles == 42)
     }
+
+    @Test("Complex Puzzle Decodes - Special Case 4")
+    func decoderDecodesComplexPuzzleSpecialCase_4() async throws {
+        let puzzle = try PKTaijiPuzzle(decoding: "3:Br2+B202+BBy2")
+        #expect(puzzle.mechanics == [.dot])
+        
+        var redDot = PKTaijiTile(state: .normal, symbol: .dot(value: 2, additive: true), color: .red)
+        redDot.filled = true
+
+        var yellowDot = PKTaijiTile(state: .normal, symbol: .dot(value: 2, additive: true), color: .yellow)
+        yellowDot.filled = true
+
+        #expect(puzzle.tiles.first == redDot)
+        #expect(puzzle.tiles.last == yellowDot)
+        #expect(puzzle.tiles.count { $0.filled == false && $0.state == .normal } == 5)
+        #expect(puzzle.tiles.count == 9)
+    }
 }
 

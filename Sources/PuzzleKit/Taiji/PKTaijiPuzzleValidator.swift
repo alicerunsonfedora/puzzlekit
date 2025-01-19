@@ -175,16 +175,32 @@ public class PKTaijiPuzzleValidator {
         let plusDots = symbolLUT.dotsPositive.filter { dot in
             guard let dotRegion = regionMap[dot] else { return false }
             return dotRegion == region
-        }.reduce(0) { accum, dotCoord in
-            sumDotTile(accum: accum, coordinate: dotCoord, additive: true)
         }
         let minusDots = symbolLUT.dotsNegative.filter { dot in
             guard let dotRegion = regionMap[dot] else { return false }
             return dotRegion == region
-        }.reduce(0) { accum, dotCoord in
+        }
+
+        if !options.contains(.ignoresColor) {
+            let allDots = plusDots + minusDots
+            guard !allDots.isEmpty else { return true }
+            let expectedColor = puzzle.tile(at: allDots[0])?.color
+            let allMatchColor = allDots.allSatisfy { coord in
+                let tile = puzzle.tile(at: coord)
+                return tile?.color == expectedColor
+            }
+            if !allMatchColor { return false }
+        }
+
+        let plusDotSum = plusDots.reduce(0) { accum, dotCoord in
+            sumDotTile(accum: accum, coordinate: dotCoord, additive: true)
+        }
+
+        let minusDotSum = minusDots.reduce(0) { accum, dotCoord in
             sumDotTile(accum: accum, coordinate: dotCoord, additive: false)
         }
-        let expectedSize = plusDots - minusDots
+
+        let expectedSize = plusDotSum - minusDotSum
         if expectedSize == 0 { return true }
 
         let regionData = regions[region]
